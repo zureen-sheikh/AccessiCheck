@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#5c1f33">
+<meta name="description" content="AccessiCheck finds common web accessibility problems in your HTML, explains why they matter and fixes them. Built with Java Spring Boot and Jsoup.">
+<title>AccessiCheck | Web Accessibility Made Clear</title>
+<style>
+:root{--bg:#fbf6f2;--paper:#fffdfb;--ink:#2b2226;--muted:#76666a;--wine:#5c1f33;--wine2:#743047;--gold:#d9a21b;--clay:#b5482a;--line:#eadcda;--green:#477457;--shadow:0 22px 55px rgba(65,27,40,.13);--sans:"Trebuchet MS",Arial,sans-serif;--serif:Georgia,"Times New Roman",serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 var(--sans);overflow-x:hidden}a{color:inherit;text-decoration:none}a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:4px}.wrap{width:min(1160px,calc(100% - 48px));margin:auto}
+.header{position:sticky;top:0;z-index:30;background:rgba(251,246,242,.93);backdrop-filter:blur(15px);border-bottom:1px solid var(--line)}.nav{height:76px;display:flex;align-items:center;justify-content:space-between;gap:24px}.brand{display:flex;align-items:center;gap:11px;color:var(--wine);font-size:21px;font-weight:900}.brand-icon{height:40px;width:40px;border-radius:13px;background:var(--wine);color:white;display:grid;place-items:center;box-shadow:0 7px 18px #5c1f332c}.brand-icon svg{width:24px;height:24px}.navlinks{display:flex;gap:27px;align-items:center;font-size:13px;font-weight:800;color:#6d5960}.navlinks a:hover{color:var(--clay)}.nav-actions{display:flex;gap:10px;align-items:center}.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid transparent;border-radius:11px;padding:12px 18px;font:800 13px var(--sans);cursor:pointer;transition:transform .22s,box-shadow .22s,background .22s}.btn:hover{transform:translateY(-3px) scale(1.035);box-shadow:0 11px 22px #5c1f3329}.btn:active{transform:scale(.97)}.primary{background:var(--wine);color:white}.primary:hover{background:var(--wine2)}.outline{border-color:#d9c4c7;color:var(--wine);background:transparent}.gold{background:var(--gold);color:#30252a}.menu{display:none;background:none;border:0;color:var(--wine);font-size:25px}
+.hero{position:relative;padding:76px 0 78px;overflow:hidden}.hero:before{content:"";position:absolute;width:610px;height:610px;right:-210px;top:-270px;border-radius:50%;background:radial-gradient(circle,#f1dfd8,transparent 68%)}.hero-grid{position:relative;display:grid;grid-template-columns:1.04fr .96fr;gap:52px;align-items:center}.eyebrow{display:inline-flex;align-items:center;gap:9px;border:1px solid #e6d5d1;background:#fffaf6;color:var(--wine);padding:7px 13px;border-radius:30px;font-size:11px;font-weight:900;letter-spacing:1.2px;text-transform:uppercase}.eyebrow i{width:8px;height:8px;background:var(--gold);border-radius:50%;box-shadow:0 0 0 4px #d9a21b26}h1{font:700 clamp(43px,5.4vw,68px)/1.08 var(--serif);letter-spacing:-2px;color:var(--wine);margin:22px 0 18px}h1 em{font-weight:700;color:var(--clay)}.hero-copy{max-width:535px;color:var(--muted);font-size:16px;line-height:1.85;margin:0 0 26px}.hero-actions{display:flex;gap:12px;flex-wrap:wrap}.proof{display:flex;align-items:center;gap:11px;margin-top:28px;color:#76666a;font-size:11px}.proof-icons{display:flex}.proof-icons span{height:28px;width:28px;margin-left:-5px;border:2px solid var(--bg);border-radius:50%;display:grid;place-items:center;background:#f0e1dc;color:var(--wine);font-weight:900}.proof-icons span:first-child{margin-left:0}
+.visual{position:relative;min-width:0;padding:12px 8px 14px 0}.visual:before{content:"";position:absolute;inset:8% 3% 0;background:#efdfd9;border-radius:40% 60% 48% 52%;transform:rotate(-8deg)}.window{position:relative;background:var(--paper);border:1px solid #e6d7d4;border-radius:19px;overflow:hidden;box-shadow:var(--shadow);transform:rotate(.8deg);transition:transform .3s}.window:hover{transform:rotate(0) scale(1.025)}.windowbar{height:43px;background:#f6eeea;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:7px;padding:0 16px}.wdot{height:8px;width:8px;border-radius:50%;background:#d9bdb7}.address{height:21px;max-width:200px;flex:1;background:#fffaf7;border-radius:20px;margin-left:9px}.preview{padding:21px}.preview-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}.preview-head b{font:700 17px var(--serif);color:var(--wine)}.demo-tag{background:#eaf2eb;color:var(--green);font-size:9px;font-weight:900;padding:5px 9px;border-radius:20px;letter-spacing:.6px}.scorebox{display:flex;align-items:center;gap:15px;background:#fbf6f2;border:1px solid var(--line);border-radius:13px;padding:14px}.ring{height:72px;width:72px;position:relative;flex:none}.ring svg{height:100%;width:100%;transform:rotate(-90deg)}.ring strong{position:absolute;inset:0;display:grid;place-items:center;color:var(--wine);font-size:20px}.scoretext b{display:block;font-size:13px}.scoretext small{font-size:10px;color:var(--muted)}.label{margin:18px 0 7px;color:#987d7e;font-size:9px;font-weight:900;letter-spacing:1.3px}.issue{display:flex;align-items:center;gap:10px;padding:9px 10px;margin-top:7px;border:1px solid var(--line);border-radius:10px;background:white}.issue-icon{height:28px;width:28px;display:grid;place-items:center;background:#f8e9e4;color:var(--clay);border-radius:8px;font-size:14px}.issue b{display:block;font-size:10px}.issue small{display:block;color:var(--muted);font-size:9px}.level{margin-left:auto;padding:4px 7px;border-radius:20px;background:#fbe4df;color:#a43a2b;font-size:8px;font-weight:900}.level.med{background:#fff1d4;color:#89600c}.float-note{position:absolute;right:-5px;top:0;padding:10px 13px;border:1px solid var(--line);border-radius:12px;background:white;box-shadow:0 10px 25px #5c1f331b;color:var(--wine);font-size:10px;font-weight:900;animation:float 5s ease-in-out infinite}.float-note small{display:block;color:var(--green);font-size:9px;font-weight:700}.spark{position:absolute;left:-17px;bottom:22px;color:var(--gold);font-size:31px;animation:twinkle 3s infinite}
+.ribbon{background:var(--wine);color:white;padding:18px 0}.ribbon-inner{display:flex;justify-content:center;align-items:center;gap:48px;flex-wrap:wrap}.ribbon-item{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:800;color:#f7e9e8}.ribbon-item strong{font:700 20px var(--serif);color:var(--gold)}.section{padding:83px 0}.section-head{text-align:center;max-width:680px;margin:0 auto 38px}.kicker{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--clay);font-weight:900}h2{font:700 clamp(31px,4vw,43px)/1.18 var(--serif);color:var(--wine);letter-spacing:-.8px;margin:10px 0 12px}.section-head p{color:var(--muted);margin:0;line-height:1.8;font-size:14px}.checks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}.check-card{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:23px;min-height:226px;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}.check-card:hover{transform:translateY(-6px) scale(1.025);box-shadow:0 16px 32px rgba(92,31,51,.16);border-color:#cdaeb3}.check-icon{height:45px;width:45px;border-radius:13px;background:#f5e8e2;display:grid;place-items:center;font-size:21px;margin-bottom:14px}.check-card h3{margin:0 0 7px;color:var(--wine);font:700 17px var(--serif)}.check-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.8}
+.how{background:#f3e9e4}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.step{background:#fffdfb;border:1px solid #e8d8d3;border-radius:15px;padding:22px 18px;transition:transform .23s,box-shadow .23s}.step:hover{transform:translateY(-5px) scale(1.02);box-shadow:0 12px 25px #5c1f3318}.step-no{height:34px;width:34px;border-radius:10px;background:var(--wine);color:white;display:grid;place-items:center;font-weight:900;margin-bottom:15px}.step h3{font:700 16px var(--serif);color:var(--wine);margin:0 0 6px}.step p{color:var(--muted);font-size:11px;line-height:1.8;margin:0}.why-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:45px;align-items:center}.why-panel{background:var(--wine);color:white;border-radius:21px;padding:33px;position:relative;overflow:hidden}.why-panel:after{content:"♿";position:absolute;right:-8px;bottom:-48px;font-size:170px;color:#ffffff0d}.why-panel h2{color:white}.why-panel p{color:#ead9dc;font-size:13px;line-height:1.85}.why-panel .btn{position:relative;z-index:1;margin-top:10px}.benefits{display:grid;grid-template-columns:1fr 1fr;gap:22px}.benefit{display:flex;gap:10px;align-items:flex-start}.tick{height:26px;width:26px;flex:none;border-radius:8px;background:#eaf1e9;color:var(--green);display:grid;place-items:center;font-weight:900}.benefit b{display:block;color:var(--wine);font-size:12px;margin-bottom:3px}.benefit small{display:block;color:var(--muted);font-size:10px;line-height:1.7}.cta{padding:0 0 82px}.cta-box{position:relative;overflow:hidden;background:linear-gradient(120deg,#5c1f33,#783149);border-radius:22px;padding:45px 25px;text-align:center;color:white}.cta-box:before,.cta-box:after{content:"";position:absolute;border:1px solid #ffffff20;border-radius:50%;width:190px;height:190px}.cta-box:before{left:-70px;top:-120px}.cta-box:after{right:-60px;bottom:-125px;width:250px;height:250px}.cta-box h2{color:white;margin:8px 0}.cta-box p{max-width:560px;margin:0 auto 21px;color:#efdee1;font-size:13px}footer{border-top:1px solid var(--line);padding:23px 0;color:var(--muted);font-size:11px}.footer-inner{display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap}.footer-brand{font-size:15px;font-weight:900;color:var(--wine)}.reveal{opacity:0;transform:translateY(20px);transition:opacity .65s,transform .65s}.reveal.show{opacity:1;transform:none}
+@keyframes float{0%,100%{translate:0 0}50%{translate:0 -9px}}@keyframes twinkle{0%,100%{transform:scale(.9) rotate(0);opacity:.7}50%{transform:scale(1.15) rotate(15deg);opacity:1}}
+@media(max-width:900px){.hero-grid{gap:25px}.navlinks{gap:15px}.steps{grid-template-columns:repeat(2,1fr)}.why-grid{gap:27px}}
+@media(max-width:700px){.wrap{width:calc(100% - 32px)}.nav{height:67px}.menu{display:block}.navlinks{display:none;position:absolute;top:67px;left:0;right:0;background:var(--bg);padding:17px 24px 21px;border-bottom:1px solid var(--line);flex-direction:column;align-items:flex-start;gap:15px}.navlinks.open{display:flex}.nav-actions .outline{display:none}.nav-actions .btn{padding:10px 12px;font-size:11px}.hero{padding:52px 0 60px}.hero-grid{grid-template-columns:1fr;gap:28px}h1{font-size:47px}.hero-copy{font-size:14px}.visual{max-width:520px;width:100%;margin:auto}.ribbon-inner{gap:15px}.ribbon-item{font-size:10px}.ribbon-item strong{font-size:17px}.section{padding:65px 0}.checks-grid{grid-template-columns:1fr}.check-card{min-height:0}.steps{gap:11px}.step{padding:17px 14px}.why-grid{grid-template-columns:1fr}.benefits{gap:18px}.cta{padding-bottom:60px}.cta-box{padding:36px 18px}}
+@media(max-width:420px){h1{font-size:40px}.steps{grid-template-columns:1fr}.benefits{grid-template-columns:1fr}.preview{padding:15px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+
+/* ===== additions ===== */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#prog{position:fixed;left:0;top:0;height:4px;width:0;background:linear-gradient(90deg,var(--gold),var(--clay));z-index:60;transition:width .1s linear}
+.navlinks a{position:relative;padding:4px 0}
+.navlinks a.active{color:var(--clay)}
+.navlinks a.active:after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:3px;border-radius:3px;background:var(--gold)}
+.statband{background:var(--paper);border-bottom:1px solid var(--line)}
+.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:26px 0}
+.stat{text-align:center;transition:transform .25s ease}
+.stat:hover{transform:translateY(-4px) scale(1.06)}
+.stat b{display:block;font:700 34px var(--serif);color:var(--wine)}
+.stat span{font-size:12px;color:var(--muted);font-weight:800;letter-spacing:.04em}
+.check-card .badge,.badge{position:absolute;right:16px;top:16px;font-size:9px;font-weight:900;letter-spacing:.8px;text-transform:uppercase;padding:4px 9px;border-radius:20px;background:#f3e3b8;color:#6b4a00}
+.badge.live{background:#e1eee3;color:var(--green)}
+.check-card code{display:block;margin-top:12px;padding:8px 10px;border-radius:9px;background:#f6eeea;color:var(--wine);font:12px Consolas,Menlo,monospace;overflow-x:auto}
+.check-card.soon{background:#faf4f0;border-style:dashed}
+.check-card.soon h3,.check-card.soon p{opacity:.78}
+.tryit{background:#f8efe9}
+.try-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:0 14px 34px rgba(65,27,40,.08);transition:transform .25s ease,box-shadow .25s ease}
+.panel:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(65,27,40,.14)}
+.panel h3{margin:0 0 6px;font:700 20px var(--serif);color:var(--wine)}
+.muted{color:var(--muted);font-size:13px;margin:0 0 12px}
+#homeCode{width:100%;border:1px solid #dcc9c6;border-radius:12px;padding:12px;background:#fffaf7;color:var(--ink);font:14px/1.6 Consolas,Menlo,monospace;resize:vertical}
+#homeCode:focus{outline:3px solid var(--gold);outline-offset:2px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 10px}
+.tab{padding:8px 18px;border-radius:30px;border:1px solid #d9c4c7;background:transparent;color:var(--wine);font:800 13px var(--sans);cursor:pointer;transition:transform .2s ease,background .2s ease,color .2s ease,border-color .2s ease}
+.tab:hover{transform:scale(1.07)}
+.tab[aria-pressed="true"]{background:var(--wine);color:#fff;border-color:var(--wine)}
+.sw{display:inline-flex;align-items:center;gap:8px;font:800 13px var(--sans);cursor:pointer;margin:2px 0 8px;color:var(--wine)}
+.sw input{width:18px;height:18px;accent-color:var(--clay)}
+.snip{margin:8px 0;padding:12px 14px;border-radius:10px;background:#f6eeea;border-left:5px solid #b3261e;font:13px/1.6 Consolas,Menlo,monospace;white-space:pre-wrap;overflow-x:auto;color:var(--ink)}
+.snip.good{border-left-color:var(--green)}
+.say{margin:8px 0;padding:12px 16px;border-radius:12px;font:800 16px var(--sans);background:#fff6f2;border:1px dashed var(--clay);color:var(--wine)}
+.say.good{background:#f1f7f2;border-color:var(--green)}
+.feats{background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}
+.feat{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:24px;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.feat:hover{transform:translateY(-6px) scale(1.025);box-shadow:0 16px 32px rgba(92,31,51,.16);border-color:#cdaeb3}
+.feat h3{margin:0 0 7px;color:var(--wine);font:700 17px var(--serif)}
+.feat p{margin:0;color:var(--muted);font-size:13px;line-height:1.8}
+.narrow{max-width:820px}
+.faq details{background:var(--paper);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;padding:0 20px;transition:box-shadow .2s ease}
+.faq details[open]{box-shadow:0 10px 24px rgba(92,31,51,.1);border-color:#cdaeb3}
+.faq summary{cursor:pointer;list-style:none;padding:16px 0;font:700 16px var(--serif);color:var(--wine);display:flex;justify-content:space-between;gap:14px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:after{content:"+";font:700 22px var(--sans);color:var(--clay);transition:transform .25s ease}
+.faq details[open] summary:after{transform:rotate(45deg)}
+.faq details p{margin:0 0 16px;color:var(--muted);font-size:14px;line-height:1.8}
+.footlinks{display:flex;gap:18px;flex-wrap:wrap}
+.footlinks a:hover{color:var(--gold)}
+@media(max-width:900px){.feat-grid{grid-template-columns:1fr 1fr}.try-grid{grid-template-columns:1fr}.statgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.feat-grid{grid-template-columns:1fr}}
+.urlrow{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}.urlrow input{flex:1;min-width:200px;border:1px solid #dcc9c6;border-radius:12px;padding:11px 13px;background:#fffaf7;color:var(--ink);font:14px var(--sans)}.urlrow input:focus{outline:3px solid var(--gold);outline-offset:2px}
+</style></head>
+<body>
+<div id="prog" aria-hidden="true"></div>
+<header class="header"><div class="wrap nav">
+<a class="brand" href="#home"><span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><path d="M4 9h16M12 7v13m-5-7 5 2 5-2m-10 7 5-2 5 2"/></svg></span>AccessiCheck</a>
+<button class="menu" id="menuBtn" aria-label="Open menu" aria-expanded="false">☰</button>
+<nav class="navlinks" id="navLinks" aria-label="Main navigation"><a href="#home">Home</a><a href="#checks">What We Check</a><a href="#try">Try It</a><a href="#how">How It Works</a><a href="#features">Features</a><a href="#faq">FAQ</a></nav>
+<div class="nav-actions"><a class="btn outline" href="dashboard.html">Dashboard</a><a class="btn primary" href="dashboard.html#scan">New Scan <span>↗</span></a></div>
+</div></header>
+<main>
+<section class="hero" id="home"><div class="wrap hero-grid"><div class="reveal show">
+<div class="eyebrow"><i></i> Building a more inclusive web</div><h1>Every website should be accessible to <em>everyone.</em></h1>
+<p class="hero-copy">Discover common accessibility barriers in your HTML. AccessiCheck helps you understand what needs attention, explore suggested improvements and take a step towards a more inclusive web.</p>
+<div class="hero-actions"><a class="btn primary" href="dashboard.html#scan">Start New Scan <span>→</span></a><a class="btn outline" href="#checks">Explore what we check</a></div>
+<div class="proof"><div class="proof-icons" aria-hidden="true"><span>✓</span><span>⌘</span><span>♿</span></div><span>Simple explanations · Clear priorities · Practical guidance</span></div>
+</div><div class="visual reveal show" aria-label="Sample accessibility scan preview"><div class="float-note">✦ Scan overview<small>Illustrative dashboard preview</small></div><div class="window"><div class="windowbar"><i class="wdot"></i><i class="wdot"></i><i class="wdot"></i><div class="address"></div></div><div class="preview">
+<div class="preview-head"><b>Accessibility report</b><span class="demo-tag">SAMPLE PREVIEW</span></div><div class="scorebox"><div class="ring"><svg viewBox="0 0 80 80" role="img" aria-label="Illustrative score 78 out of 100"><circle cx="40" cy="40" r="32" fill="none" stroke="#eadcda" stroke-width="7"/><circle cx="40" cy="40" r="32" fill="none" stroke="#477457" stroke-width="7" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="44"/></svg><strong>78</strong></div><div class="scoretext"><b>Accessibility score</b><small>Example score display for a scan report</small></div></div>
+<div class="label">EXAMPLE ISSUES</div><div class="issue"><span class="issue-icon">▧</span><div><b>Missing alt text</b><small>Add a description to the image</small></div><span class="level">CRITICAL</span></div><div class="issue"><span class="issue-icon">▤</span><div><b>Unlabeled form field</b><small>Give the field a clear label</small></div><span class="level">CRITICAL</span></div><div class="issue"><span class="issue-icon">↗</span><div><b>Empty link</b><small>Add meaningful link text</small></div><span class="level med">MEDIUM</span></div>
+</div></div><div class="spark" aria-hidden="true">✳</div></div></div></section>
+<div class="ribbon"><div class="wrap ribbon-inner"><div class="ribbon-item"><strong>01</strong> Detect common issues</div><div class="ribbon-item"><strong>02</strong> Understand why they matter</div><div class="ribbon-item"><strong>03</strong> Improve your HTML</div></div></div>
+<section class="statband" aria-label="AccessiCheck at a glance"><div class="wrap statgrid">
+  <div class="stat reveal"><b id="stScans">–</b><span>scans analyzed</span></div>
+  <div class="stat reveal"><b>6</b><span>live checks</span></div>
+  <div class="stat reveal"><b>6</b><span>features</span></div>
+  <div class="stat reveal"><b>1-click</b><span>auto-fix</span></div>
+</div></section>
+<section class="section" id="checks"><div class="wrap"><div class="section-head reveal"><span class="kicker">Accessibility checks</span><h2>Six ways to make the web more inclusive.</h2><p>All six checks are live. Paste your HTML code, or scan a real website by its address.</p></div>
+<div class="checks-grid">
+<article class="check-card reveal"><span class="badge live">Live</span><div class="check-icon">▧</div><h3>Missing Alt Text</h3><p>Find images without alternative text, so screen-reader users are not left without a useful description.</p><code>&lt;img src="a.jpg"&gt;</code></article>
+<article class="check-card reveal"><span class="badge live">Live</span><div class="check-icon">▤</div><h3>Unlabeled Form Fields</h3><p>Identify form inputs without a clear label, helping users understand what information they need to enter.</p><code>&lt;input name="email"&gt;</code></article>
+<article class="check-card reveal"><span class="badge live">Live</span><div class="check-icon">↗</div><h3>Empty Links</h3><p>Detect links with no readable text or accessible name, so their purpose is clearer to assistive technology users.</p><code>&lt;a href="x.html"&gt;&lt;/a&gt;</code></article>
+<article class="check-card reveal"><span class="badge live">Live</span><div class="check-icon">◐</div><h3>Colour Contrast Check</h3><p>Check whether text and its background have enough contrast, and suggest a darker or lighter colour that is easier to read.</p><code>&lt;p style="color:#aaa"&gt;</code></article>
+<article class="check-card reveal"><span class="badge live">Live</span><div class="check-icon">⌘</div><h3>ARIA Roles Check</h3><p>Find invalid roles, custom controls the keyboard cannot reach, and focusable items hidden from screen readers.</p><code>&lt;div role="buttn"&gt;</code></article>
+<article class="check-card reveal"><span class="badge live">Live</span><div class="check-icon">◎</div><h3>Live URL Scan</h3><p>Type a website address and AccessiCheck loads the page and scans it, instead of relying only on pasted HTML code.</p><code>https://example.com</code></article>
+</div></div></section>
+<section class="section tryit" id="try"><div class="wrap">
+<div class="section-head reveal"><span class="kicker">Interactive</span><h2>See it in action.</h2><p>Scan a tiny page, or hear why these problems matter to a blind user.</p></div>
+<div class="try-grid">
+  <div class="panel reveal">
+    <h3>⚡ Try it in 5 seconds</h3>
+    <p class="muted">This snippet has 3 accessibility problems. Edit it if you like, then scan. You will be taken to the dashboard with the result.</p>
+    <label for="homeCode" class="sr">Sample HTML to scan</label>
+    <textarea id="homeCode" rows="6" spellcheck="false">&lt;img src="shoe.jpg"&gt;
+&lt;input type="text" name="email"&gt;
+&lt;a href="about.html"&gt;&lt;/a&gt;</textarea>
+    <p style="margin:12px 0 0"><button class="btn primary" type="button" id="homeScan">Scan this snippet <span>→</span></button></p>
+    <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+    <label for="homeUrl" style="font-weight:800;font-size:13px;color:var(--wine)">Or scan a real website</label>
+    <div class="urlrow"><input id="homeUrl" type="text" placeholder="https://example.com" autocomplete="off"><button class="btn outline" type="button" id="homeUrlGo">Scan website</button></div>
+  </div>
+  <div class="panel reveal">
+    <h3>🔊 Hear what a screen reader hears</h3>
+    <p class="muted">Pick a problem, then switch to the fixed version and press play.</p>
+    <div class="tabs" role="group" aria-label="Choose a problem">
+      <button type="button" class="tab" data-sr="img" aria-pressed="true">Image</button>
+      <button type="button" class="tab" data-sr="in" aria-pressed="false">Form field</button>
+      <button type="button" class="tab" data-sr="a" aria-pressed="false">Link</button>
+    </div>
+    <label class="sw"><input type="checkbox" id="srFix"> Show fixed version</label>
+    <pre class="snip" id="srCode"></pre>
+    <div class="say" id="srSay" aria-live="polite"></div>
+    <p style="margin:12px 0 0"><button class="btn outline" type="button" id="srPlay">▶ Play sound</button></p>
+  </div>
+</div></div></section>
+<section class="section how" id="how"><div class="wrap"><div class="section-head reveal"><span class="kicker">Simple workflow</span><h2>From code to a clearer experience.</h2><p>A straightforward process to review your HTML, understand issues and improve accessibility.</p></div><div class="steps">
+<article class="step reveal"><div class="step-no">01</div><h3>Paste or scan a URL</h3><p>Add HTML code, or type a website address, in the New Scan section.</p></article><article class="step reveal"><div class="step-no">02</div><h3>Analyze the code</h3><p>Run the scanner to identify the supported accessibility issues.</p></article><article class="step reveal"><div class="step-no">03</div><h3>Review and fix</h3><p>Read explanations, compare before and after, and apply available fixes.</p></article><article class="step reveal"><div class="step-no">04</div><h3>Track progress</h3><p>Review your scan score and previous scans in the dashboard.</p></article>
+</div></div></section>
+<section class="section feats" id="features"><div class="wrap">
+<div class="section-head reveal"><span class="kicker">Our features</span><h2>Everything you need, in one place.</h2><p>Six features that turn a list of errors into clear next steps.</p></div>
+<div class="feat-grid">
+<article class="feat reveal"><div class="check-icon">⚡</div><h3>One-click auto-fix</h3><p>Press Apply all fixes and the Java backend rewrites your HTML for every supported issue.</p></article>
+<article class="feat reveal"><div class="check-icon">⇄</div><h3>Before / After view</h3><p>See the original code next to the corrected code for each issue, so you learn what changed.</p></article>
+<article class="feat reveal"><div class="check-icon">◆</div><h3>Clear priorities</h3><p>Every issue is Critical or Medium. Score = 100 − 12 per Critical − 7 per Medium.</p></article>
+<article class="feat reveal"><div class="check-icon">◈</div><h3>Score gauge and history</h3><p>An animated gauge shows your score, and every scan is saved in a database to track progress.</p></article>
+<article class="feat reveal"><div class="check-icon">⤓</div><h3>Copy and download</h3><p>Copy the fixed code in one click, or download a full HTML report to share with your team.</p></article>
+<article class="feat reveal"><div class="check-icon">☾</div><h3>Friendly modes</h3><p>Dark mode, large text mode and keyboard-friendly controls, because an accessibility tool should be accessible.</p></article>
+</div></div></section>
+<section class="section" id="why"><div class="wrap why-grid"><div class="why-panel reveal"><span class="kicker" style="color:#f0c65a">More than an error list</span><h2>Accessibility, explained simply.</h2><p>AccessiCheck aims to turn technical findings into clear, practical next steps — especially for learners who are beginning to understand web accessibility.</p><a class="btn gold" href="dashboard.html#scan">Try New Scan →</a></div><div class="benefits reveal">
+<div class="benefit"><span class="tick">✓</span><div><b>Blind and low-vision users</b><small>Screen readers need text for images and form fields.</small></div></div><div class="benefit"><span class="tick">✓</span><div><b>Keyboard-only users</b><small>Links and buttons must make sense without a mouse.</small></div></div><div class="benefit"><span class="tick">✓</span><div><b>Students and beginners</b><small>Learn accessibility through simple explanations.</small></div></div><div class="benefit"><span class="tick">✓</span><div><b>Developers and teams</b><small>Catch problems early, before users find them.</small></div></div>
+</div></div></section>
+<section class="section" id="faq"><div class="wrap narrow">
+<div class="section-head reveal"><span class="kicker">Questions</span><h2>Frequently asked questions.</h2></div>
+<div class="faq reveal">
+<details><summary>What is web accessibility?</summary><p>It means building websites that people with disabilities can use too, for example blind users who rely on screen readers, or people who cannot use a mouse.</p></details>
+<details><summary>Which problems does AccessiCheck find today?</summary><p>Six checks: images without alt text, form fields without labels, links with no text, low colour contrast, wrong or missing ARIA roles, and a live URL scan for real websites.</p></details>
+<details><summary>Can it scan any website?</summary><p>It can scan public websites. For safety, addresses on your own computer or private network are blocked. Colour contrast is checked for inline styles only.</p></details>
+<details><summary>Does it change my code automatically?</summary><p>Only when you press Apply all fixes. You can compare Before and After for every issue, and copy the fixed code.</p></details>
+<details><summary>Is my code stored?</summary><p>No. Only the scan date, the score, the number of issues and the source (for example the website name) are saved in the database. Your HTML is not saved.</p></details>
+<details><summary>What is it built with?</summary><p>Java 17 and Spring Boot for the server, Jsoup to read the HTML, an H2 database for scan history, and plain HTML, CSS and JavaScript for the pages.</p></details>
+</div></div></section>
+<section class="cta"><div class="wrap"><div class="cta-box reveal"><span class="kicker" style="color:#f0c65a">Start with one page</span><h2>Let's make the web more inclusive.</h2><p>Run a scan, understand the findings and take your next step towards more accessible HTML.</p><a class="btn gold" href="dashboard.html#scan">Open New Scan <span>→</span></a></div></div></section>
+</main><footer><div class="wrap footer-inner"><a class="footer-brand" href="#home">♿ AccessiCheck</a><nav class="footlinks" aria-label="Footer"><a href="#checks">What We Check</a><a href="#features">Features</a><a href="#faq">FAQ</a><a href="dashboard.html">Dashboard</a></nav><span>Built with Java · Spring Boot · Jsoup · H2</span><span>© <span id="year"></span> AccessiCheck</span></div></footer>
+<script>
+const menuBtn=document.getElementById('menuBtn'),navLinks=document.getElementById('navLinks');menuBtn.addEventListener('click',()=>{const opened=navLinks.classList.toggle('open');menuBtn.setAttribute('aria-expanded',String(opened));menuBtn.setAttribute('aria-label',opened?'Close menu':'Open menu');menuBtn.textContent=opened?'×':'☰'});navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{navLinks.classList.remove('open');menuBtn.setAttribute('aria-expanded','false');menuBtn.textContent='☰'}));document.getElementById('year').textContent=new Date().getFullYear();const items=document.querySelectorAll('.reveal');if('IntersectionObserver'in window&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('show');observer.unobserve(entry.target)}}),{threshold:.12});items.forEach(item=>observer.observe(item))}else{items.forEach(item=>item.classList.add('show'))}
+</script><script>
+(function(){
+var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+var $=function(s){return document.querySelector(s)},all=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+
+/* score ring in the hero preview counts up */
+var ring=$(".ring circle:nth-of-type(2)"),rn=$(".ring strong");
+if(ring&&rn&&!reduce){
+  ring.style.strokeDashoffset="201";rn.textContent="0";
+  setTimeout(function(){ring.style.transition="stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1)";ring.style.strokeDashoffset="44";
+    var t0=null;function st(t){if(!t0)t0=t;var p=Math.min(1,(t-t0)/1400);rn.textContent=Math.round(78*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(st)}requestAnimationFrame(st)},500)
+}
+
+/* live scan count from the Java backend */
+var st=$("#stScans");
+fetch("/api/history").then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(h){
+  var n=h.length;if(reduce){st.textContent=n;return}
+  var t0=null;function step(t){if(!t0)t0=t;var p=Math.min(1,(t-t0)/1200);st.textContent=Math.round(n*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(step)}requestAnimationFrame(step)
+}).catch(function(){st.textContent="9+"});
+
+/* scroll progress and active menu link */
+var prog=$("#prog");
+function onScroll(){var h=document.documentElement,max=h.scrollHeight-h.clientHeight;prog.style.width=(max>0?h.scrollTop/max*100:0)+"%"}
+window.addEventListener("scroll",onScroll,{passive:true});onScroll();
+var links=all(".navlinks a"),secs=["home","checks","try","how","features","faq"].map(function(id){return document.getElementById(id)}).filter(Boolean);
+if("IntersectionObserver" in window){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(a){a.classList.toggle("active",a.getAttribute("href")==="#"+e.target.id)})}})},{rootMargin:"-45% 0px -50% 0px"});
+  secs.forEach(function(x){io.observe(x)})
+}
+
+/* try it: send the snippet to the dashboard */
+$("#homeScan").addEventListener("click",function(){
+  var code=$("#homeCode").value;
+  try{sessionStorage.setItem("ac-code",code)}catch(e){}
+  location.href="dashboard.html#scan"
+});
+
+function goUrl(){var u=$("#homeUrl").value.trim();if(!u){$("#homeUrl").focus();return}try{sessionStorage.setItem("ac-url",u)}catch(e){}location.href="dashboard.html#scan"}
+$("#homeUrlGo").addEventListener("click",goUrl);
+$("#homeUrl").addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();goUrl()}});
+
+/* screen reader simulator */
+var SR={
+ img:{bad:'<img src="shoe.jpg">',good:'<img src="shoe.jpg" alt="Red running shoe">',badSay:"Graphic. Unlabeled.",goodSay:"Image: Red running shoe."},
+ in:{bad:'<input type="text" name="email">',good:'<label for="email">Email</label>\n<input type="text" id="email" name="email">',badSay:"Edit text. Blank.",goodSay:"Email. Edit text."},
+ a:{bad:'<a href="about.html"></a>',good:'<a href="about.html">About us</a>',badSay:"Link.",goodSay:"Link: About us."}
+},cur="img";
+function srDraw(){
+  var fixed=$("#srFix").checked,d=SR[cur];
+  $("#srCode").textContent=fixed?d.good:d.bad;$("#srCode").className="snip"+(fixed?" good":"");
+  $("#srSay").textContent="🔊 "+(fixed?d.goodSay:d.badSay);$("#srSay").className="say"+(fixed?" good":"")
+}
+all(".tab").forEach(function(b){b.addEventListener("click",function(){cur=b.dataset.sr;all(".tab").forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false")});srDraw()})});
+$("#srFix").addEventListener("change",srDraw);
+$("#srPlay").addEventListener("click",function(){
+  var d=SR[cur],t=$("#srFix").checked?d.goodSay:d.badSay;
+  if(!("speechSynthesis" in window)){$("#srSay").textContent+="  (sound is not supported in this browser)";return}
+  speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=.9;speechSynthesis.speak(u)
+});
+srDraw();
+})();
+</script>
+</body></html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AccessiCheck – Dashboard</title>
+<style>
+:root{--bg:#f7f0f0;--card:#fff;--ink:#2b2226;--mut:#6b5b53;--line:#e3d3d5;--side:#5c1f33;--brand:#5c1f33;--bt:#fff;--acc:#b5482a;--gold:#d9a21b;--ok:#3f6b4f;--soft:#f7ecec;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1216;--card:#271b20;--ink:#f4e9ea;--mut:#cdb8bc;--line:#4a363c;--side:#3a1422;--brand:#d9a21b;--bt:#2b2226;--acc:#e8836a;--ok:#7fc29a;--soft:#33242a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1a1216;--card:#271b20;--ink:#f4e9ea;--mut:#cdb8bc;--line:#4a363c;--side:#3a1422;--brand:#d9a21b;--bt:#2b2226;--acc:#e8836a;--ok:#7fc29a;--soft:#33242a;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 Georgia,"Times New Roman",serif}
+h1,h2,h3,h4,button,nav,.pill,th{font-family:"Trebuchet MS",Calibri,Arial,sans-serif}
+.hc{font-size:20px}.hc .card{border:2px solid var(--ink)}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+aside{background:var(--side);color:#fff;padding:20px 14px}
+.logo{font:700 22px "Trebuchet MS",Arial,sans-serif;margin:0 6px 18px}
+nav{display:flex;flex-direction:column;gap:4px}
+nav button,.tool{background:none;border:0;color:#fff;text-align:left;font-size:16px;padding:11px 12px;border-radius:10px;cursor:pointer}
+nav button:hover,.tool:hover{background:rgba(255,255,255,.12)}
+nav button[aria-current]{background:var(--gold);color:#2b2226;font-weight:700}
+.tool{border:1px solid rgba(255,255,255,.35);margin-top:8px;font-size:14px}
+button:focus-visible,textarea:focus-visible{outline:3px solid #f5a623;outline-offset:2px}
+main{padding:26px;max-width:980px;width:100%}
+h2{font-size:28px;margin:0 0 4px;color:var(--brand)}
+.sub{color:var(--mut);margin:0 0 18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.stat b{display:block;font:700 34px "Trebuchet MS",Arial,sans-serif;color:var(--acc)}
+.stat span{color:var(--mut);font-size:15px}
+.btn{background:var(--brand);color:var(--bt);border:0;border-radius:10px;padding:12px 20px;font-size:16px;cursor:pointer;font-weight:700;margin:4px 8px 4px 0}
+.btn.alt{background:var(--acc);color:#fff}
+.bar{background:var(--line);height:14px;border-radius:8px;overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;background:var(--ok);border-radius:8px}
+.pill{display:inline-block;padding:3px 12px;border-radius:20px;font-size:14px;font-weight:700}
+.crit{background:#b3261e;color:#fff}.med{background:#ffe2a8;color:#5a3a00}
+textarea{width:100%;min-height:210px;font:15px/1.5 Consolas,monospace;padding:12px;border-radius:10px;border:2px solid var(--mut);background:var(--card);color:var(--ink)}
+pre{margin:0;padding:10px;border-radius:8px;background:var(--soft);font:14px/1.45 Consolas,monospace;white-space:pre-wrap;word-break:break-word}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.cmp h5{margin:0 0 4px;font:700 14px "Trebuchet MS",Arial,sans-serif}
+.cmp .b pre{border-left:5px solid #b3261e}.cmp .a pre{border-left:5px solid var(--ok)}
+.hd{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}.hd h4{margin:0;font-size:18px}
+table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--brand)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+ul.x,ul.v{list-style:none;padding:0;margin:0}ul.x li,ul.v li{padding:8px 0 8px 28px;position:relative}
+ul.x li:before{content:"✕";position:absolute;left:0;color:var(--mut)}ul.v li:before{content:"✓";position:absolute;left:0;color:var(--ok);font-weight:700}
+ol.g{padding-left:22px}ol.g li{margin-bottom:10px}
+@media (max-width:760px){.app{grid-template-columns:minmax(0,1fr)}main{min-width:0}aside{padding:12px}nav{flex-direction:row;overflow-x:auto}nav button{white-space:nowrap}main{padding:16px}.cmp,.two{grid-template-columns:1fr}}
+
+/* ===== Interactive effects ===== */
+.card,.btn,nav button,.tool,.pill,.logo,.stat b,tbody tr{transition:transform .25s ease,box-shadow .25s ease,background .2s ease,filter .2s ease,border-color .2s ease}
+.card:hover{transform:translateY(-4px) scale(1.015);box-shadow:0 14px 30px rgba(92,31,51,.20);border-color:var(--acc)}
+.stat b{transform-origin:left center}
+.stat:hover b{transform:scale(1.15)}
+.btn:hover{transform:translateY(-2px) scale(1.06);box-shadow:0 8px 18px rgba(0,0,0,.25);filter:brightness(1.1)}
+.btn:active{transform:scale(.96)}
+nav button:hover,.tool:hover{transform:translateX(6px) scale(1.03)}
+.logo:hover{transform:scale(1.07) rotate(-1.5deg)}
+.pill:hover{transform:scale(1.15)}
+tbody tr:hover{background:var(--soft)}
+textarea{transition:border-color .2s ease,box-shadow .2s ease}
+textarea:focus{border-color:var(--acc);box-shadow:0 0 0 4px rgba(181,72,42,.22);outline:none}
+.bar i{transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.screen:not([hidden]){animation:fadeUp .45s ease both}
+.grid .card{animation:pop .5s ease both}
+.grid .card:nth-child(2){animation-delay:.08s}.grid .card:nth-child(3){animation-delay:.16s}.grid .card:nth-child(4){animation-delay:.24s}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+
+/* ===== Gauge, toast, confetti ===== */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.gaugeCard{display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.gInfo{flex:1;min-width:220px}
+.chip{display:inline-block;margin:6px 0;padding:3px 14px;border-radius:20px;font:700 14px "Trebuchet MS",Arial,sans-serif;background:var(--soft);color:var(--brand);border:1px solid var(--line)}
+#toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:#2b2226;color:#fff;border:1px solid rgba(255,255,255,.3);padding:12px 22px;border-radius:30px;font:700 15px "Trebuchet MS",Arial,sans-serif;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#confetti{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:50}
+#confetti[hidden]{display:none}
+
+/* ===== scan modes ===== */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+.tab{padding:8px 20px;border-radius:30px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:700 15px "Trebuchet MS",Arial,sans-serif;cursor:pointer;transition:transform .2s ease,background .2s ease,color .2s ease,border-color .2s ease}
+.tab:hover{transform:scale(1.06)}
+.tab[aria-pressed="true"]{background:var(--brand);color:var(--bt);border-color:var(--brand)}
+#urlIn{width:100%;padding:13px 14px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:16px Consolas,Menlo,monospace;margin:6px 0}
+#urlIn:focus{border-color:var(--acc);box-shadow:0 0 0 4px rgba(181,72,42,.22);outline:none}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <p class="logo">♿ AccessiCheck</p>
+  <nav aria-label="Main menu">
+    <button id="homeLink" type="button">🏠 Home page</button>
+    <button data-go="dashboard">📊 Dashboard</button>
+    <button data-go="scan">🔍 New Scan</button>
+    <button data-go="result">📋 Result</button>
+    <button data-go="history">🕘 History</button>
+    <button data-go="checks">✅ What We Check</button>
+    <button data-go="features">⭐ Features</button>
+    <button data-go="guide">📖 Guide</button>
+  </nav>
+  <button class="tool" id="hcBtn">Large text mode</button>
+  <button class="tool" id="themeBtn" type="button">🌙 Dark mode</button>
+</aside>
+<main>
+
+<section class="screen" id="dashboard">
+  <h2>Dashboard</h2><p class="sub">Your accessibility progress at a glance.</p>
+  <div class="grid">
+    <div class="card stat"><b id="sTotal">0</b><span>Total scans</span></div>
+    <div class="card stat"><b id="sLast">0</b><span>Latest score</span></div>
+    <div class="card stat"><b id="sBest">0</b><span>Best score</span></div>
+    <div class="card stat"><b id="sGain">0</b><span>Points gained</span></div>
+  </div>
+  <div class="card"><h3 style="margin-top:0">Score progress</h3><div id="chart"></div>
+    <div class="bar" role="img" id="goalBar"><i id="goalFill"></i></div><span class="sub" id="goalTxt"></span></div>
+  <p><button class="btn" data-go="scan">Start new scan</button><button class="btn alt" data-go="history">View history</button></p>
+</section>
+
+<section class="screen" id="scan" hidden>
+  <h2>New Scan</h2><p class="sub">Paste HTML code, or scan a live website. A sample with problems is already filled in.</p>
+  <div class="tabs" role="group" aria-label="Scan type">
+    <button type="button" class="tab" id="modeHtml" aria-pressed="true">Paste HTML</button>
+    <button type="button" class="tab" id="modeUrl" aria-pressed="false">Scan a URL</button>
+  </div>
+  <div id="htmlBox">
+  <label for="code" style="font-family:'Trebuchet MS',Arial,sans-serif;font-weight:700">HTML code</label>
+  <textarea id="code" spellcheck="false">&lt;h1&gt;My Shop&lt;/h1&gt;
+&lt;img src="shoe.jpg"&gt;
+&lt;form&gt;
+  &lt;input type="text" name="email"&gt;
+&lt;/form&gt;
+&lt;a href="about.html"&gt;&lt;/a&gt;
+&lt;img src="logo.png" alt="Shop logo"&gt;</textarea>
+  <p><button class="btn" id="go">Analyze code</button><button class="btn alt" id="sampleBad" type="button">Load broken sample</button><button class="btn alt" id="sampleGood" type="button">Load good sample</button></p>
+  <p class="sub">Tip: press Ctrl + Enter inside the box to analyze.</p>
+  </div>
+  <div id="urlBox" hidden>
+    <label for="urlIn" style="font-family:'Trebuchet MS',Arial,sans-serif;font-weight:700">Website address</label>
+    <input id="urlIn" type="text" placeholder="https://example.com" autocomplete="off" spellcheck="false">
+    <p><button class="btn" id="goUrl" type="button">Scan website</button></p>
+    <p class="sub" id="urlMsg" role="alert" style="color:#b3261e;font-weight:700"></p>
+    <p class="sub">Works for public websites and takes a few seconds. Private and local addresses are blocked for safety. Colour contrast is checked for inline styles only.</p>
+  </div>
+</section>
+
+<section class="screen" id="result" hidden>
+  <h2>Result</h2><p class="sub" id="rSub"></p>
+  <div class="card gaugeCard">
+    <svg id="gauge" viewBox="0 0 140 140" width="150" height="150" role="img" aria-label="Accessibility score gauge"><circle cx="70" cy="70" r="58" fill="none" stroke="var(--line)" stroke-width="14"/><circle id="gArc" cx="70" cy="70" r="58" fill="none" stroke="#3f9b66" stroke-width="14" stroke-linecap="round" stroke-dasharray="364.42" stroke-dashoffset="364.42" transform="rotate(-90 70 70)"/><text id="gNum" x="70" y="80" text-anchor="middle" font-size="36" font-weight="700" fill="var(--ink)" font-family="Trebuchet MS,Arial,sans-serif">0</text></svg>
+    <div class="gInfo"><h3 style="margin:0">Accessibility score</h3><span class="chip" id="gLabel">-</span><br><span class="sr" id="rScore" aria-live="polite">0</span><span id="rCount"></span>
+      <div class="bar"><i id="rBar"></i></div></div></div>
+  <p><button class="btn" id="fix">Apply all fixes and rescan</button><button class="btn alt" data-go="history">View history</button><button class="btn" id="copyBtn" type="button">Copy fixed code</button><button class="btn" id="dlBtn" type="button">Download report</button></p>
+  <div id="rList"></div>
+</section>
+
+<section class="screen" id="history" hidden>
+  <h2>History and Progress</h2><p class="sub" id="hSub"></p>
+  <div class="card"><table><thead><tr><th scope="col">Scan</th><th scope="col">Date</th><th scope="col">Score</th><th scope="col">Issues</th><th scope="col">Source</th></tr></thead><tbody id="hBody"></tbody></table></div>
+</section>
+
+<section class="screen" id="checks" hidden>
+  <h2>What We Check</h2><p class="sub">Six checks, all live.</p>
+  <div class="grid">
+    <div class="card"><h3>🖼️ Missing alt text</h3><p>An image without a description. A blind user hears nothing useful.</p><pre>&lt;img src="a.jpg"&gt;</pre></div>
+    <div class="card"><h3>📝 Unlabeled field</h3><p>An input with no label. Users do not know what to type.</p><pre>&lt;input name="email"&gt;</pre></div>
+    <div class="card"><h3>🔗 Empty link</h3><p>A link with no text. The screen reader only says “link”.</p><pre>&lt;a href="x.html"&gt;&lt;/a&gt;</pre></div>
+    <div class="card"><h3>🎨 Colour contrast</h3><p>Text that is hard to read on its background. We suggest a better colour.</p><pre>&lt;p style="color:#aaa"&gt;</pre></div>
+    <div class="card"><h3>⌘ ARIA roles</h3><p>Wrong roles, controls the keyboard cannot reach, or focusable items hidden from screen readers.</p><pre>&lt;div role="buttn"&gt;</pre></div>
+    <div class="card"><h3>🌐 Live URL scan</h3><p>Type a website address and scan the real page.</p><pre>https://example.com</pre></div>
+  </div>
+</section>
+
+<section class="screen" id="features" hidden>
+  <h2>Features</h2><p class="sub">Six things AccessiCheck does for you.</p>
+  <div class="grid">
+    <div class="card"><h3>⚡ One-click auto-fix</h3><p>Press Apply all fixes and Java rewrites your HTML for every supported issue.</p></div>
+    <div class="card"><h3>⇄ Before / After view</h3><p>See the original code next to the corrected code for each issue.</p></div>
+    <div class="card"><h3>🎯 Clear priorities</h3><p>Critical and Medium levels. Score = 100 − 12 per Critical − 7 per Medium.</p></div>
+    <div class="card"><h3>📈 Score gauge and history</h3><p>Every scan is saved in a database, so you can watch the score improve.</p></div>
+    <div class="card"><h3>⤓ Copy and download</h3><p>Copy the fixed code, or download a full HTML report to share.</p></div>
+    <div class="card"><h3>🌙 Friendly modes</h3><p>Dark mode, large text mode and keyboard-friendly buttons.</p></div>
+  </div>
+  <h3 style="margin:26px 0 10px">Compared with existing tools</h3>
+  <div class="two">
+    <div class="card"><h3>Existing tools</h3><ul class="x"><li>Find missing alt, labels, empty links</li><li>Check contrast and heading order</li><li>Show a list of errors</li><li>Often technical language</li></ul></div>
+    <div class="card"><h3>Added by us</h3><ul class="v"><li>Auto-Fix code for every issue</li><li>Simple explanation for beginners</li><li>Priority: Critical or Medium</li><li>Before / After view</li><li>Score history and progress</li></ul></div>
+  </div>
+</section>
+
+<section class="screen" id="guide" hidden>
+  <h2>Guide</h2><p class="sub">How to use AccessiCheck in four steps.</p>
+  <div class="card"><ol class="g"><li><b>Open New Scan</b>, then paste your HTML code or type a website address.</li><li><b>Press Analyze code.</b> The tool reads every tag.</li><li><b>Read the Result.</b> Fix the Critical issues first.</li><li><b>Press Apply all fixes</b> and watch the score go up. Track it in History.</li></ol></div>
+</section>
+
+</main>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<canvas id="confetti" aria-hidden="true" hidden></canvas>
+<script>
+var scans=[{d:"20 Oct 2026",s:45,n:8,src:"Sample data"},{d:"21 Oct 2026",s:58,n:5,src:"Sample data"},{d:"22 Oct 2026",s:65,n:3,src:"Sample data"}],last=null,srcLabel="Pasted HTML";
+var $=function(s){return document.querySelector(s)},all=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+function esc(t){return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function show(id){all(".screen").forEach(function(e){e.hidden=e.id!==id});all("nav button").forEach(function(b){if(b.dataset.go===id)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});if(id==="dashboard")dash();if(id==="history")hist();window.scrollTo(0,0)}
+all("[data-go]").forEach(function(b){b.addEventListener("click",function(){show(b.dataset.go)})});
+function analyze(html){
+  var doc=new DOMParser().parseFromString(html,"text/html"),it=[];
+  all.call;
+  doc.querySelectorAll("img:not([alt])").forEach(function(el){var c=el.cloneNode();c.setAttribute("alt","Describe the image");it.push({el:el,k:"img",t:"Missing alt text",p:"Critical",w:"A screen reader cannot tell a blind user what the image shows.",b:el.outerHTML,a:c.outerHTML})});
+  Array.prototype.slice.call(doc.querySelectorAll("input")).filter(function(el){var ty=el.type;if(ty==="hidden"||ty==="submit"||ty==="button")return false;if(el.getAttribute("aria-label")||el.closest("label"))return false;return !(el.id&&doc.querySelector('label[for="'+el.id+'"]'))}).forEach(function(el){var id=el.id||el.name||"field",c=el.cloneNode();c.id=id;it.push({el:el,k:"in",id:id,t:"Form field without label",p:"Critical",w:"Users do not know what to type, and screen readers cannot announce the field.",b:el.outerHTML,a:'<label for="'+id+'">'+id+"</label>\n"+c.outerHTML})});
+  doc.querySelectorAll("a").forEach(function(el){if(el.textContent.trim()||el.getAttribute("aria-label")||el.querySelector("img[alt]"))return;var c=el.cloneNode(true);c.textContent="Link text";it.push({el:el,k:"a",t:"Empty link",p:"Medium",w:"A screen reader only says “link”, so the user cannot tell where it goes.",b:el.outerHTML,a:c.outerHTML})});
+  return {doc:doc,it:it}
+}
+function score(it){var c=it.filter(function(x){return x.p==="Critical"}).length,m=it.length-c;return Math.max(0,100-12*c-7*m)}
+function render(r,sc,html,fixed){
+  last={html:html,r:r,sc:sc,fixed:fixed};
+  scans.push({d:new Date().toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}),s:sc,n:r.it.length,src:srcLabel});
+  var c=r.it.filter(function(x){return x.p==="Critical"}).length;
+  $("#rScore").textContent=sc;$("#rBar").style.width=sc+"%";
+  $("#rSub").textContent="Scan #"+scans.length+" · "+new Date().toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})+(srcLabel!=="Pasted HTML"?" · "+srcLabel:"");
+  $("#rCount").textContent=r.it.length+" issues: "+c+" Critical, "+(r.it.length-c)+" Medium";
+  $("#rList").innerHTML=r.it.length?r.it.map(function(x,i){return '<div class="card" style="margin-bottom:14px"><div class="hd"><h4>'+(i+1)+". "+x.t+'</h4><span class="pill '+(x.p==="Critical"?"crit":"med")+'">'+x.p+'</span></div><p><b>Why it matters:</b> '+x.w+'</p><div class="cmp"><div class="b"><h5>Before</h5><pre>'+esc(x.b)+'</pre></div><div class="a"><h5>After (fixed)</h5><pre>'+esc(x.a)+"</pre></div></div></div>"}).join(""):'<div class="card">🎉 No issues found. This code looks accessible.</div>';
+  show("result")
+}
+function run(){
+  srcLabel="Pasted HTML";
+  var html=$("#code").value;
+  fetch("/api/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({html:html})})
+    .then(function(res){if(!res.ok)throw new Error("api");return res.json()})
+    .then(function(d){render({it:d.issues},d.score,html,d.fixedHtml)})
+    .catch(function(){var r=analyze(html);render(r,score(r.it),html,null)})
+}
+$("#go").addEventListener("click",run);
+$("#fix").addEventListener("click",function(){
+  if(!last)return;if(last.fixed){$("#code").value=last.fixed;run();return}var r=last.r,doc=r.doc;
+  r.it.forEach(function(x){
+    if(x.k==="img")x.el.setAttribute("alt","Describe the image");
+    if(x.k==="in"){x.el.id=x.id;var l=doc.createElement("label");l.htmlFor=x.id;l.textContent=x.id;x.el.before(l)}
+    if(x.k==="a")x.el.textContent="Link text"
+  });
+  $("#code").value=doc.body.innerHTML;run()
+});
+function dash(){
+  var s=scans.map(function(x){return x.s}),l=s[s.length-1],b=Math.max.apply(null,s);
+  $("#sTotal").textContent=s.length;$("#sLast").textContent=l;$("#sBest").textContent=b;$("#sGain").textContent=(l-s[0]>=0?"+":"")+(l-s[0]);
+  var W=560,H=170,p=26,pts=s.map(function(v,i){return [p+i*((W-2*p)/Math.max(1,s.length-1)),H-p-(v/100)*(H-2*p),v]});
+  $("#chart").innerHTML='<svg viewBox="0 0 '+W+" "+H+'" width="100%" role="img" aria-label="Score progress chart"><polyline fill="none" stroke="var(--acc)" stroke-width="3" points="'+pts.map(function(q){return q[0]+","+q[1]}).join(" ")+'"/>'+pts.map(function(q){return '<circle cx="'+q[0]+'" cy="'+q[1]+'" r="5" fill="var(--brand)"/><text x="'+q[0]+'" y="'+(q[1]-10)+'" text-anchor="middle" font-size="13" fill="var(--ink)">'+q[2]+"</text>"}).join("")+"</svg>";
+  $("#goalFill").style.width=l+"%";$("#goalBar").setAttribute("aria-label","Latest score "+l+" out of 100");$("#goalTxt").textContent="Latest score "+l+" of 100. "+(100-l)+" points to a perfect score."
+}
+function hist(){
+  var s=scans;$("#hSub").textContent="Score moved from "+s[0].s+" to "+s[s.length-1].s+" in "+s.length+" scans.";
+  $("#hBody").innerHTML=s.slice().reverse().map(function(x,i){return "<tr><td>#"+(s.length-i)+"</td><td>"+x.d+"</td><td>"+x.s+"/100</td><td>"+x.n+"</td><td>"+(x.src||"-")+"</td></tr>"}).join("")
+}
+$("#hcBtn").addEventListener("click",function(){var h=document.documentElement.classList.toggle("hc");this.textContent=h?"Normal text mode":"Large text mode"});
+function setMode(url){
+  $("#htmlBox").hidden=url;$("#urlBox").hidden=!url;
+  $("#modeHtml").setAttribute("aria-pressed",url?"false":"true");$("#modeUrl").setAttribute("aria-pressed",url?"true":"false")
+}
+function runUrl(){
+  var u=$("#urlIn").value.trim(),msg=$("#urlMsg"),b=$("#goUrl");msg.textContent="";
+  if(!u){msg.textContent="Please type a website address.";return}
+  if(!/^https?:\/\//i.test(u))u="https://"+u;
+  b.disabled=true;b.textContent="Scanning...";
+  fetch("/api/analyze-url",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({url:u})})
+    .then(function(res){return res.json().then(function(d){return{ok:res.ok,d:d}})})
+    .then(function(x){
+      if(!x.ok){msg.textContent=x.d.error||"Could not scan that address.";show("scan");return}
+      try{srcLabel=new URL(u).hostname}catch(e){srcLabel="Website"}
+      render({it:x.d.issues},x.d.score,"",x.d.fixedHtml)})
+    .catch(function(){msg.textContent="Could not reach the AccessiCheck server. Is it running?";show("scan")})
+    .then(function(){b.disabled=false;b.textContent="Scan website"})
+}
+$("#modeHtml").addEventListener("click",function(){setMode(false)});
+$("#modeUrl").addEventListener("click",function(){setMode(true)});
+$("#goUrl").addEventListener("click",runUrl);
+$("#urlIn").addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();runUrl()}});
+function init(){var st=(location.hash||"").slice(1);show(["dashboard","scan","result","history","checks","features","guide"].indexOf(st)>-1&&st!=="result"?st:"dashboard");try{var c=sessionStorage.getItem("ac-code");if(c){sessionStorage.removeItem("ac-code");$("#code").value=c;run()}var uu=sessionStorage.getItem("ac-url");if(uu){sessionStorage.removeItem("ac-url");setMode(true);$("#urlIn").value=uu;runUrl()}}catch(e){}}
+fetch("/api/history").then(function(r){if(!r.ok)throw new Error("api");return r.json()}).then(function(h){if(h.length)scans=h.map(function(x){return{d:x.scanDate,s:x.score,n:x.issueCount,src:x.scanSource}})}).catch(function(){}).then(init);
+</script>
+<script>
+(function(){
+var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+var C=364.42;
+
+function toast(msg){var t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(toast.h);toast.h=setTimeout(function(){t.classList.remove("show")},2300)}
+
+function countTo(el,to,fmt,dur){
+  if(reduce){el.textContent=fmt(to);return}
+  el.textContent=fmt(0);dur=dur||900;var t0=null;
+  function step(t){if(!t0)t0=t;var p=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-p,3);el.textContent=fmt(Math.round(to*e));if(p<1)requestAnimationFrame(step)}
+  requestAnimationFrame(step)
+}
+
+/* animated gauge */
+function gauge(sc){
+  var arc=$("#gArc"),num=$("#gNum");
+  var gc=sc<50?"#b3261e":(sc<80?"#d9a21b":"#3f9b66");arc.setAttribute("stroke",gc);$("#rBar").style.background=gc;
+  $("#gLabel").textContent=sc>=90?"Excellent":(sc>=80?"Good":(sc>=50?"Needs work":"Poor"));
+  var off=C*(1-sc/100);
+  if(reduce){arc.style.strokeDashoffset=off;num.textContent=sc;return}
+  arc.style.transition="none";arc.style.strokeDashoffset=C;arc.getBoundingClientRect();
+  arc.style.transition="stroke-dashoffset 1.1s cubic-bezier(.2,.8,.2,1)";arc.style.strokeDashoffset=off;
+  countTo(num,sc,String,1100)
+}
+
+/* confetti */
+function confetti(){
+  if(reduce)return;
+  var cv=$("#confetti"),ctx=cv.getContext("2d");cv.width=window.innerWidth;cv.height=window.innerHeight;cv.hidden=false;
+  var cols=["#d9a21b","#b5482a","#5c1f33","#3f9b66","#f5a623","#ffffff"],ps=[],i;
+  for(i=0;i<170;i++)ps.push({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*.6,w:6+Math.random()*6,h:8+Math.random()*8,vx:-2+Math.random()*4,vy:2+Math.random()*4,r:Math.random()*6.28,vr:-.2+Math.random()*.4,c:cols[Math.floor(Math.random()*cols.length)]});
+  var t0=performance.now();
+  function f(t){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    ps.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.04;p.r+=p.vr;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.c;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore()});
+    if(t-t0<3300)requestAnimationFrame(f);else{ctx.clearRect(0,0,cv.width,cv.height);cv.hidden=true}
+  }
+  requestAnimationFrame(f)
+}
+
+/* hook into existing functions */
+var _render=window.render;
+window.render=function(r,sc,html,fixed){_render(r,sc,html,fixed);gauge(sc);if(sc===100)confetti()};
+var _dash=window.dash;
+window.dash=function(){
+  _dash();
+  ["#sTotal","#sLast","#sBest"].forEach(function(id){var el=$(id);countTo(el,parseInt(el.textContent,10)||0,String)});
+  var g=$("#sGain");countTo(g,parseInt(g.textContent,10)||0,function(n){return (n>=0?"+":"")+n})
+};
+
+/* dark mode toggle */
+var tb=$("#themeBtn");
+function applyTheme(m){document.documentElement.setAttribute("data-theme",m);tb.textContent=m==="dark"?"☀️ Light mode":"🌙 Dark mode";try{localStorage.setItem("ac-theme",m)}catch(e){}}
+var saved=null;try{saved=localStorage.getItem("ac-theme")}catch(e){}
+applyTheme(saved||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));
+tb.addEventListener("click",function(){applyTheme(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark")});
+
+/* copy fixed code */
+function copyText(t){
+  if(navigator.clipboard&&navigator.clipboard.writeText)return navigator.clipboard.writeText(t);
+  return new Promise(function(res,rej){var ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand("copy")?res():rej()}catch(e){rej(e)}document.body.removeChild(ta)})
+}
+$("#copyBtn").addEventListener("click",function(){
+  if(!last||!last.fixed){toast("Run a scan first");return}
+  copyText(last.fixed).then(function(){toast("Fixed code copied")}).catch(function(){toast("Could not copy")})
+});
+
+/* download report */
+$("#dlBtn").addEventListener("click",function(){
+  if(!last){toast("Run a scan first");return}
+  var d=new Date().toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+  var items=last.r.it.map(function(x,i){return "<h3>"+(i+1)+". "+esc(x.t)+" ("+x.p+")</h3><p><b>Why it matters:</b> "+esc(x.w)+"</p><p><b>Before:</b></p><pre>"+esc(x.b)+"</pre><p><b>After (fixed):</b></p><pre>"+esc(x.a)+"</pre>"}).join("")||"<p>No issues found.</p>";
+  var html='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>AccessiCheck Report</title><style>body{font-family:Arial,sans-serif;max-width:800px;margin:30px auto;padding:0 16px;color:#222}pre{background:#f4eeee;padding:10px;white-space:pre-wrap}h1{color:#5c1f33}</style></head><body><h1>AccessiCheck Report</h1><p>Date: '+d+'</p><p><b>Score: '+last.sc+'/100</b> · '+last.r.it.length+' issues</p>'+items+'</body></html>';
+  var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([html],{type:"text/html"}));a.download="accessicheck-report.html";document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(a.href)},1500);toast("Report downloaded")
+});
+
+/* samples and Ctrl+Enter */
+var BAD=$("#code").value;
+var GOOD='<h1>My Shop</h1>\n<img src="shoe.jpg" alt="Red running shoe">\n<form>\n  <label for="email">Email</label>\n  <input type="text" id="email" name="email">\n</form>\n<a href="about.html">About us</a>';
+$("#sampleBad").addEventListener("click",function(){$("#code").value=BAD;toast("Broken sample loaded")});
+$("#sampleGood").addEventListener("click",function(){$("#code").value=GOOD;toast("Good sample loaded")});
+$("#code").addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();run()}});
+})();
+</script>
+<script>
+(function(){
+function goHome(){location.href="index.html"}
+$("#homeLink").addEventListener("click",goHome);
+$(".logo").style.cursor="pointer";$(".logo").addEventListener("click",goHome);
+})();
+</script>
+</body>
+</html>
